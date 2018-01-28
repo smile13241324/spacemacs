@@ -26,7 +26,7 @@
   - [[#repository-list][Repository list]]
 
 * Descriptions
-This layers adds extensive support for [[http://git-scm.com/][git]].
+This layers adds extensive support for [[http://git-scm.com/][git]] to Spacemacs.
 
 ** Features:
 - git repository management the indispensable [[http://magit.vc/][magit]] package
