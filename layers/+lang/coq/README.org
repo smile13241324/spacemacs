@@ -4,6 +4,7 @@
 
 * Table of Contents                                        :TOC_4_gh:noexport:
 - [[#description][Description]]
+  - [[#features][Features:]]
 - [[#install][Install]]
   - [[#layer][Layer]]
   - [[#coq][Coq]]
@@ -19,6 +20,9 @@
 * Description
 This layer adds support for the [[https://coq.inria.fr/][Coq]] proof assistant (adapted from
 [[https://github.com/tchajed/spacemacs-coq]]).
+
+** Features:
+- 
 
 * Install
 ** Layer
