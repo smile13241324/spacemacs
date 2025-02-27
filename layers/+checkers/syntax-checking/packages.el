@@ -37,6 +37,10 @@
     (flycheck-pos-tip :toggle syntax-checking-enable-tooltips)
     popwin))
 
+(defun syntax-checking/init-package-lint ()
+  (use-package package-lint
+    :defer t))
+
 (defun syntax-checking/init-flycheck ()
   (use-package flycheck
     :defer t
