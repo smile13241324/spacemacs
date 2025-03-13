@@ -159,13 +159,13 @@ In addition, this layer adds the following key bindings to =org-mode=
 
 | Key binding  | Command                    | Description                     |
 |--------------+----------------------------+---------------------------------|
-| ~SPC $ ei c~ | ellama-complete            | Complete text in current buffer |
-| ~SPC $ ei w~ | ellama-improve-wording     | Improve wording                 |
-| ~SPC $ ei g~ | ellama-improve-grammar     | Improve grammar                 |
-| ~SPC $ ei s~ | ellama-improve-conciseness | Shorten text (make concise)     |
-| ~SPC $ ei l~ | ellama-make-list           | Create markdown list            |
-| ~SPC $ ei t~ | ellama-make-table          | Create markdown table           |
-| ~SPC $ ei f~ | ellama-make-format         | Render text as specified format |
+| ~SPC $ ee c~ | ellama-complete            | Complete text in current buffer |
+| ~SPC $ ee w~ | ellama-improve-wording     | Improve wording                 |
+| ~SPC $ ee g~ | ellama-improve-grammar     | Improve grammar                 |
+| ~SPC $ ee s~ | ellama-improve-conciseness | Shorten text (make concise)     |
+| ~SPC $ ee l~ | ellama-make-list           | Create markdown list            |
+| ~SPC $ ee t~ | ellama-make-table          | Create markdown table           |
+| ~SPC $ ee f~ | ellama-make-format         | Render text as specified format |
 
 *** Question-Answering tasks
 
