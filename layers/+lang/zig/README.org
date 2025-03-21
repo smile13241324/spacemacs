@@ -10,6 +10,8 @@
   - [[#choosing-a-backend][Choosing a backend]]
     - [[#lsp-zls][LSP (zls)]]
     - [[#zig-mode][zig-mode]]
+- [[#configuration][Configuration]]
+  - [[#lsp-zls-1][LSP (zls)]]
 - [[#key-bindings][Key bindings]]
   - [[#lsp][LSP]]
 
@@ -60,9 +62,7 @@ indentation and custom commands for compilation and testing.
 For more information check the [[https://github.com/ziglang/zig-mode][=zig-mode= repository]].
 
 * Configuration
-
 ** LSP (zls)
-
 To enable LSP support for Zig using ZLS (Zig Language Server), you need to configure the zig layer with the appropriate paths for the ZLS executable, Zig executable, and Zig standard library. Below is an example configuration:
 
 #+BEGIN_SRC elisp
