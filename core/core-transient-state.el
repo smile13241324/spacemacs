@@ -247,6 +247,7 @@ used."
                ,doc)
             (spacemacs//transient-state-adjust-bindings
              ',bindings ',remove-bindings ',add-bindings)))
+          (evil-declare-ignore-repeat ',body-func)
           (when ,title
             (let ((guide (concat "[" (propertize "KEY" 'face 'hydra-face-blue)
                                  "] exits state  ["
