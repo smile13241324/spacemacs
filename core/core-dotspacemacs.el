@@ -943,15 +943,16 @@ If SYMBOL value is `display-graphic-p' then return the result of
   dotspacemacs-filepath)
 
 (defun dotspacemacs/copy-template ()
-  "Copy `.spacemacs.template' in home directory. Ask for confirmation
-before copying the file if the destination already exists."
+  "Copy `dotspacemacs-template.el' to `dotspacemacs-filepath'.
+
+Ask for confirmation before copying the file if the destination already exists."
   (interactive)
   (let* ((copy? (if (file-exists-p dotspacemacs-filepath)
                     (y-or-n-p
                      (format "%s already exists. Do you want to overwrite it ? "
                              dotspacemacs-filepath)) t)))
     (when copy?
-      (copy-file (concat dotspacemacs-template-directory ".spacemacs.template")
+      (copy-file (concat dotspacemacs-template-directory "dotspacemacs-template.el")
                  dotspacemacs-filepath t)
       (message "%s has been installed." dotspacemacs-filepath))))
 
@@ -1002,7 +1003,7 @@ If ARG is non nil then ask questions to the user before installing the dotfile."
                     spacemacs-base)))))))))
     (with-current-buffer (find-file-noselect
                           (concat dotspacemacs-template-directory
-                                  ".spacemacs.template"))
+                                  "dotspacemacs-template.el"))
       (dolist (p preferences)
         (goto-char (point-min))
         (re-search-forward (car p))
@@ -1107,7 +1108,7 @@ Loads default .spacemacs template and suspends pruning of orphan packages.
 Informs users of error and prompts for default editing style for use during
 error recovery."
   (load (concat dotspacemacs-template-directory
-                ".spacemacs.template"))
+                "dotspacemacs-template.el"))
   (define-advice dotspacemacs/layers (:after (&rest _) error-recover-preserve-packages)
     (setq-default dotspacemacs-install-packages 'used-but-keep-unused)
     (advice-remove 'dotspacemacs/layers #'dotspacemacs/layers@error-recover-preserve-packages))

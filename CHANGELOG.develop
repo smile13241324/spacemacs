@@ -570,7 +570,7 @@ both Racer and RLS not being maintained anymore.
   - New variable =dotspacemacs-startup-banner-scale= (thanks to Daniel)
 - Removed Variables:
   - Removed unused variable =dotspacemacs-verbose-loading= from
-    =.spacemacs.template= (thanks to Ying Qu)
+    dotfile template (thanks to Ying Qu)
 Other:
   - =.gitignore= now ignores tag files and the bbdb database.
   - =.gitignore= now ignores org-journal-cache-file (thanks to Benjamin Hipple)
