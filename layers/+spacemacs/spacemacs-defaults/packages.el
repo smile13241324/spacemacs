@@ -42,8 +42,7 @@
     (image-mode :location built-in)
     (imenu :location built-in)
     (package-menu :location built-in)
-    ;; page-break-lines is shipped with spacemacs core
-    (page-break-lines :location built-in)
+    (page-break-lines :location local)
     (proced :location built-in)
     (process-menu :location built-in)
     quickrun
