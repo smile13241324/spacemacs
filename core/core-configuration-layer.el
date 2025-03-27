@@ -1375,8 +1375,7 @@ discovery."
                                                               "layers/"))))
                            (when (file-exists-p dir) (list dir))))
                        ;; additional layer directories provided by the user
-                       dotspacemacs-configuration-layer-path))
-        (discovered '()))
+                       dotspacemacs-configuration-layer-path)))
     ;; filter out directories that don't exist
     (setq search-paths (cl-remove-if-not
                         (lambda (x)
@@ -1992,8 +1991,7 @@ LAYER must not be the owner of PKG."
 
 (defun configuration-layer//pre-configure-package (pkg)
   "Pre-configure PKG object, i.e. call its pre-init functions."
-  (let* ((pkg-name (oref pkg :name))
-         (owner (car (oref pkg :owners))))
+  (let* ((pkg-name (oref pkg :name)))
     (mapc
      (lambda (layer)
        (when (configuration-layer/layer-used-p layer)
@@ -2022,8 +2020,7 @@ LAYER must not be the owner of PKG."
 
 (defun configuration-layer//post-configure-package (pkg)
   "Post-configure PKG object, i.e. call its post-init functions."
-  (let* ((pkg-name (oref pkg :name))
-         (owner (car (oref pkg :owners))))
+  (let* ((pkg-name (oref pkg :name)))
     (mapc
      (lambda (layer)
        (when (configuration-layer/layer-used-p layer)
@@ -2052,7 +2049,7 @@ LAYER must not be the owner of PKG."
          (dirs (sort dirattrs
                      (lambda (d e)
                        (time-less-p (nth 6 d) (nth 6 e))))))
-    (dotimes (c (- (length dirs) dotspacemacs-max-rollback-slots))
+    (dotimes (_ (- (length dirs) dotspacemacs-max-rollback-slots))
       (delete-directory (concat configuration-layer-rollback-directory
                                 "/" (car (pop dirs)))
                         t t))))
