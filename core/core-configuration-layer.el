@@ -454,7 +454,7 @@ cache folder.")
           quelpa-build-explicit-tar-format-p (eq (quelpa--tar-type) 'gnu))
 
     ;; Try to pre create the build dir to avoid having quelpa builds fail
-    ;; but don't aboard if this is not allowed.
+    ;; but don't abort if this is not allowed.
     (ignore-errors
       (make-directory quelpa-build-dir t))))
 
@@ -1838,7 +1838,7 @@ RNAME is the name symbol of another existing layer."
                  (not (package-installed-p x min-version))))))
 
 (defun configuration-layer//get-package-recipe (pkg-name)
-  "Return the recipe for PGK-NAME if it has one."
+  "Return the recipe for PKG-NAME if it has one."
   (let ((pkg (configuration-layer/get-package pkg-name)))
     (when pkg
       (let ((location (oref pkg :location)))
@@ -1973,7 +1973,8 @@ RNAME is the name symbol of another existing layer."
         nil)))))
 
 (defun configuration-layer//package-enabled-p (pkg layer)
-  "Returns true if PKG should be configured for LAYER.
+  "Return non-nil if PKG should be configured for LAYER.
+
 LAYER must not be the owner of PKG."
   (let* ((owner (configuration-layer/get-layer (car (oref pkg :owners))))
          (disabled (when owner (oref owner :disabled-for)))
@@ -2010,7 +2011,7 @@ LAYER must not be the owner of PKG."
      (oref pkg :pre-layers))))
 
 (defun configuration-layer//configure-package (pkg)
-  "Configure PKG object, i.e. call its post-init function."
+  "Configure PKG object, i.e. call its init function."
   (spacemacs/update-progress-bar)
   (let* ((pkg-name (oref pkg :name))
          (owner (car (oref pkg :owners))))
