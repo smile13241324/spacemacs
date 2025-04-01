@@ -2259,8 +2259,9 @@ Rollback slots are stored in
   (unless (memq pkg package-activated-list)
     (package-activate pkg)))
 
-(defun configuration-layer//get-packages-upstream-dependencies-from-alist ()
-  "Returns upstream dependencies hash map for all packages in `package-alist'.
+(defun configuration-layer//get-packages-downstream-dependencies-from-alist ()
+  "Return downstream dependencies hash map for all packages in `package-alist'.
+
 The keys are package names and the values are lists of package names that
 depends on it."
   (let ((result (make-hash-table :size 1024)))
@@ -2268,11 +2269,8 @@ depends on it."
       (let* ((pkg-sym (car pkg))
              (deps (configuration-layer//get-package-deps-from-alist pkg-sym)))
         (dolist (dep deps)
-          (let* ((dep-sym (car dep))
-                 (value (gethash dep-sym result)))
-            (puthash dep-sym
-                     (if value (cl-pushnew pkg-sym value) (list pkg-sym))
-                     result)))))
+          (let ((dep-sym (car dep)))
+            (push pkg-sym (gethash dep-sym result))))))
     result))
 
 (defun configuration-layer//get-implicit-packages-from-alist (packages)
@@ -2354,7 +2352,7 @@ depends on it."
 When called interactively, delete all orphan packages."
   (interactive (list (configuration-layer/get-packages-list)))
   (let* ((dependencies
-          (configuration-layer//get-packages-upstream-dependencies-from-alist))
+          (configuration-layer//get-packages-downstream-dependencies-from-alist))
          (implicit-packages
           (configuration-layer//get-implicit-packages-from-alist
            packages))
