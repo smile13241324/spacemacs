@@ -28,6 +28,7 @@
 (require 'package)
 (require 'warnings)
 (require 'help-mode)
+(require 'core-command-line)
 (require 'core-dotspacemacs)
 (require 'core-funcs)
 (require 'core-progress-bar)
