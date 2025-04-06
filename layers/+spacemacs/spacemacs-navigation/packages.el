@@ -46,6 +46,7 @@
   (use-package ace-link
     :commands spacemacs/ace-buffer-links
     :init
+    (evil-add-command-properties 'ace-link :jump t)
     (define-key spacemacs-buffer-mode-map "o" 'spacemacs/ace-buffer-links)
     (with-eval-after-load 'info
       (define-key Info-mode-map "o" 'ace-link-info))
