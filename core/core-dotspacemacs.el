@@ -30,6 +30,10 @@
   (concat spacemacs-core-directory "templates/")
   "Templates directory.")
 
+(defconst dotspacemacs-template-file
+  (concat dotspacemacs-template-directory "dotspacemacs-template.el")
+  "Path to .spacemacs template file.")
+
 (defconst dotspacemacs-test-results-buffer "*dotfile-test-results*"
   "Name of the buffer to display dotfile test results.")
 
@@ -948,9 +952,7 @@ If SYMBOL value is `display-graphic-p' then return the result of
 
 Ask for confirmation before copying the file if the destination already exists."
   (interactive)
-  (copy-file (concat dotspacemacs-template-directory "dotspacemacs-template.el")
-             dotspacemacs-filepath
-             1)
+  (copy-file dotspacemacs-template-file dotspacemacs-filepath 1)
   (message "%s has been installed." dotspacemacs-filepath))
 
 (defvar ido-max-window-height)
@@ -998,9 +1000,7 @@ If ARG is non nil then ask questions to the user before installing the dotfile."
                    (,(concat "A minimalist distribution that you can build on "
                              "(spacemacs-base)")
                     spacemacs-base)))))))))
-    (with-current-buffer (find-file-noselect
-                          (concat dotspacemacs-template-directory
-                                  "dotspacemacs-template.el"))
+    (with-current-buffer (find-file-noselect dotspacemacs-template-file)
       (dolist (p preferences)
         (goto-char (point-min))
         (re-search-forward (car p))
@@ -1104,8 +1104,7 @@ If ARG is non nil then ask questions to the user before installing the dotfile."
 Loads default .spacemacs template and suspends pruning of orphan packages.
 Informs users of error and prompts for default editing style for use during
 error recovery."
-  (load (concat dotspacemacs-template-directory
-                "dotspacemacs-template.el"))
+  (load dotspacemacs-template-file)
   (define-advice dotspacemacs/layers (:after (&rest _) error-recover-preserve-packages)
     (setq-default dotspacemacs-install-packages 'used-but-keep-unused)
     (advice-remove 'dotspacemacs/layers #'dotspacemacs/layers@error-recover-preserve-packages))
