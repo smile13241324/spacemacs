@@ -948,14 +948,10 @@ If SYMBOL value is `display-graphic-p' then return the result of
 
 Ask for confirmation before copying the file if the destination already exists."
   (interactive)
-  (let* ((copy? (if (file-exists-p dotspacemacs-filepath)
-                    (y-or-n-p
-                     (format "%s already exists. Do you want to overwrite it ? "
-                             dotspacemacs-filepath)) t)))
-    (when copy?
-      (copy-file (concat dotspacemacs-template-directory "dotspacemacs-template.el")
-                 dotspacemacs-filepath t)
-      (message "%s has been installed." dotspacemacs-filepath))))
+  (copy-file (concat dotspacemacs-template-directory "dotspacemacs-template.el")
+             dotspacemacs-filepath
+             1)
+  (message "%s has been installed." dotspacemacs-filepath))
 
 (defvar ido-max-window-height)
 
