@@ -132,6 +132,10 @@ subdirectory of ROOT is used."
 (defvar configuration-layer-post-load-hook nil
   "Hook executed at the end of configuration loading.")
 
+(defvar configuration-layer--packages-to-update nil
+  "List containing package names for which a new version is available.
+It is populated by `configuration-layer/update-packages'.")
+
 (defconst configuration-layer--elpa-root-directory
   (concat spacemacs-start-directory "elpa/")
   "Spacemacs ELPA root directory.")
@@ -2099,6 +2103,7 @@ to update."
                            "%s (won't be updated because package is frozen)\n"
                          "%s\n") x) t))
             (sort (mapcar 'symbol-name update-packages) 'string<))
+      (setq configuration-layer--packages-to-update update-packages)
       (if no-confirmation
           (configuration-layer//update-packages update-packages)
         (let ((answer (let ((read-answer-short t))
@@ -2111,15 +2116,36 @@ to update."
             ("yes"
              (configuration-layer//update-packages update-packages))
             ("some"
-             (configuration-layer//update-packages
-              ;; 'apply nconc on list of lists' is equivalent to 'cl-remove-if nil'
-              (apply #'nconc (mapcar (lambda (pkg)
-                                       (when (yes-or-no-p (format "Update package '%s'? " pkg))
-                                         (list pkg)))
-                                     update-packages))))
+             ;; Embark consults the value of `this-command' to determine the
+             ;; default action.
+             (let ((this-command 'configuration-layer/select-packages-to-update))
+               (call-interactively 'configuration-layer/select-packages-to-update)))
             ("no"
              (spacemacs-buffer/append "Packages update has been cancelled.\n" t)
              (user-error "Packages update has been cancelled.\n"))))))))
+
+;; We define `configuration-layer/select-packages-to-update' as an interactive
+;; function taking a single argument, such that embark users have the option to
+;; use `embark-select' and `embark-act-all' instead of CRM.
+(defun configuration-layer/select-packages-to-update (selected-packages)
+  "Select and update SELECTED-PACKAGES from `configuration-layer--packages-to-update'.
+
+This command is usually only internally used by
+`configuration-layer/update-packages' (\\[configuration-layer/update-packages]),
+but it can also be called interactively after an invocation of the
+latter command, in order to quickly update more packages that were not
+selected previously.
+
+SELECTED-PACKAGES must be a list of strings, rather than a list of
+symbols.  This is to support using this command with `embark-act-all'."
+  (interactive
+   (list (if configuration-layer--packages-to-update
+             (completing-read-multiple
+              "Packages to update: " configuration-layer--packages-to-update nil t)
+           (user-error (substitute-command-keys "In order to update packages, \
+please use \\[configuration-layer/update-packages] instead")))))
+  (setq selected-packages (mapcar #'intern selected-packages))
+  (configuration-layer//update-packages selected-packages))
 
 (defun configuration-layer//update-packages (update-packages)
   "Back up and delete packages in UPDATE-PACKAGES.
@@ -2157,7 +2183,9 @@ in the back-up directory."
          (format "--> preparing update of package %s... [%s/%s]"
                  pkg upgraded-count upgrade-count) t)
         (spacemacs//redisplay)
-        (configuration-layer//package-delete pkg)))
+        (configuration-layer//package-delete pkg)
+        (setq configuration-layer--packages-to-update
+              (delq pkg configuration-layer--packages-to-update))))
     (spacemacs-buffer/append
      (format "\n--> %s package(s) to be updated.\n" upgraded-count))
     (spacemacs-buffer/append
