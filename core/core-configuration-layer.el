@@ -2082,8 +2082,11 @@ to update."
        (mapconcat #'symbol-name
                   configuration-layer--check-new-version-error-packages
                   " ")))
-    ;; (message "packages to udpate: %s" update-packages)
-    (when (> upgrade-count 0)
+    ;; (message "packages to update: %s" update-packages)
+    (if (eq upgrade-count 0)
+        (progn
+          (spacemacs-buffer/append "--> All packages are up to date.\n")
+          (spacemacs//redisplay))
       (spacemacs-buffer/append
        (format (concat "--> Found %s package(s) to update"
                        (if (> skipped-count 0)
@@ -2106,8 +2109,6 @@ to update."
           (if (string= answer "no")
               (progn (spacemacs-buffer/append "Packages update has been cancelled.\n" t)
                      (user-error "Packages update has been cancelled.\n"))
-            ;; backup the package directory and construct an alist
-            ;; variable to be cached for easy update and rollback
             (when (string= answer "some")
               (setq update-packages
                     ;; 'apply nconc on list of lists' is equivalent to 'cl-remove-if nil'
@@ -2116,13 +2117,13 @@ to update."
                                                (list pkg)))
                                            update-packages))))
             (setq upgrade-count (length update-packages)))))
-      (configuration-layer//update-packages update-packages))
-    (when (eq upgrade-count 0)
-      (spacemacs-buffer/append "--> All packages are up to date.\n")
-      (spacemacs//redisplay))))
+      (configuration-layer//update-packages update-packages))))
 
 (defun configuration-layer//update-packages (update-packages)
-  "Back up and delete packages in UPDATE-PACKAGES."
+  "Back up and delete packages in UPDATE-PACKAGES.
+
+Keep records in `update-packages-alist', and store the alist in a file
+in the back-up directory."
   (let* ((date (format-time-string "%y-%m-%d_%H.%M.%S"))
          (rollback-dir (expand-file-name
                         (concat configuration-layer-rollback-directory
