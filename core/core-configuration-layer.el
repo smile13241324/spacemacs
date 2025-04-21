@@ -2073,13 +2073,7 @@ to update."
           (configuration-layer//get-packages-to-update distant-packages))
          (skipped-count (length
                          configuration-layer--check-new-version-error-packages))
-         (date (format-time-string "%y-%m-%d_%H.%M.%S"))
-         (rollback-dir (expand-file-name
-                        (concat configuration-layer-rollback-directory
-                                (file-name-as-directory date))))
-         (upgrade-count (length update-packages))
-         (upgraded-count 0)
-         (update-packages-alist))
+         (upgrade-count (length update-packages)))
     (when configuration-layer--check-new-version-error-packages
       (spacemacs-buffer/warning
        (concat "--> Warning: cannot update %s package(s), possibly due"
@@ -2122,44 +2116,55 @@ to update."
                                                (list pkg)))
                                            update-packages))))
             (setq upgrade-count (length update-packages)))))
-      (spacemacs-buffer/append
-       "--> performing backup of package(s) to update...\n" t)
-      (spacemacs//redisplay)
-      (dolist (pkg update-packages)
-        (unless (memq pkg dotspacemacs-frozen-packages)
-          (let* ((src-dir (configuration-layer//get-package-directory pkg))
-                 (dest-dir (expand-file-name
-                            (concat rollback-dir
-                                    (file-name-as-directory
-                                     (file-name-nondirectory src-dir))))))
-            (copy-directory src-dir dest-dir 'keeptime 'create 'copy-content)
-            (push (cons pkg (file-name-nondirectory src-dir))
-                  update-packages-alist))))
-      (spacemacs/dump-vars-to-file
-       '(update-packages-alist)
-       (expand-file-name (concat rollback-dir
-                                 configuration-layer-rollback-info)))
-      (dolist (pkg update-packages)
-        (unless (memq pkg dotspacemacs-frozen-packages)
-          (setq upgraded-count (1+ upgraded-count))
-          (spacemacs-buffer/replace-last-line
-           (format "--> preparing update of package %s... [%s/%s]"
-                   pkg upgraded-count upgrade-count) t)
-          (spacemacs//redisplay)
-          (configuration-layer//package-delete pkg)))
-      (spacemacs-buffer/append
-       (format "\n--> %s package(s) to be updated.\n" upgraded-count))
-      (spacemacs-buffer/append
-       (format "\nRestart Emacs to install the updated packages. %s\n"
-               (if (member 'restart-emacs update-packages)
-                   (concat "\n(SPC q r) won't work this time, because the"
-                           "\nrestart-emacs package is being updated.")
-                 "(SPC q r)")))
-      (configuration-layer//cleanup-rollback-directory)
-      (spacemacs//redisplay))
+      (configuration-layer//update-packages update-packages))
     (when (eq upgrade-count 0)
       (spacemacs-buffer/append "--> All packages are up to date.\n")
       (spacemacs//redisplay))))
+
+(defun configuration-layer//update-packages (update-packages)
+  "Back up and delete packages in UPDATE-PACKAGES."
+  (let* ((date (format-time-string "%y-%m-%d_%H.%M.%S"))
+         (rollback-dir (expand-file-name
+                        (concat configuration-layer-rollback-directory
+                                (file-name-as-directory date))))
+         (update-packages-alist)
+         (upgraded-count 0)
+         (upgrade-count (length update-packages)))
+    (spacemacs-buffer/append
+       "--> performing backup of package(s) to update...\n" t)
+    (spacemacs//redisplay)
+    (dolist (pkg update-packages)
+      (unless (memq pkg dotspacemacs-frozen-packages)
+        (let* ((src-dir (configuration-layer//get-package-directory pkg))
+               (dest-dir (expand-file-name
+                          (concat rollback-dir
+                                  (file-name-as-directory
+                                   (file-name-nondirectory src-dir))))))
+          (copy-directory src-dir dest-dir 'keeptime 'create 'copy-content)
+          (push (cons pkg (file-name-nondirectory src-dir))
+                update-packages-alist))))
+    (spacemacs/dump-vars-to-file
+     '(update-packages-alist)
+     (expand-file-name (concat rollback-dir
+                               configuration-layer-rollback-info)))
+    (dolist (pkg update-packages)
+      (unless (memq pkg dotspacemacs-frozen-packages)
+        (setq upgraded-count (1+ upgraded-count))
+        (spacemacs-buffer/replace-last-line
+         (format "--> preparing update of package %s... [%s/%s]"
+                 pkg upgraded-count upgrade-count) t)
+        (spacemacs//redisplay)
+        (configuration-layer//package-delete pkg)))
+    (spacemacs-buffer/append
+     (format "\n--> %s package(s) to be updated.\n" upgraded-count))
+    (spacemacs-buffer/append
+     (format "\nRestart Emacs to install the updated packages. %s\n"
+             (if (member 'restart-emacs update-packages)
+                 (concat "\n(SPC q r) won't work this time, because the"
+                         "\nrestart-emacs package is being updated.")
+               "(SPC q r)")))
+    (configuration-layer//cleanup-rollback-directory)
+    (spacemacs//redisplay)))
 
 (defun configuration-layer//rollback-slots ()
   "Return a completion table for rollback slots."
