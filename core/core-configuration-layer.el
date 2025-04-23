@@ -724,8 +724,7 @@ layers for the path.
 If USEDP or `configuration-layer--load-packages-files' is non-nil then the
 `packages.el' file of the layer is loaded."
   (let* ((layer-name (if (listp layer-specs) (car layer-specs) layer-specs))
-         (obj (if obj obj (cfgl-layer (symbol-name layer-name)
-                                      :name layer-name)))
+         (obj (if obj obj (cfgl-layer :name layer-name)))
          (packages (oref obj packages))
          (dir (or dir (oref obj dir))))
     (if (or (null dir)
@@ -777,7 +776,6 @@ LAYER-NAME is the layer name where the PKG-SPECS is listed.
 If OBJ is non nil then copy PKG-SPECS properties into OBJ, otherwise create
 a new object."
   (let* ((pkg-name (if (listp pkg-specs) (car pkg-specs) pkg-specs))
-         (pkg-name-str (symbol-name pkg-name))
          (layer (unless (eq 'dotfile layer-name)
                   (configuration-layer/get-layer layer-name)))
          (min-version (when (listp pkg-specs)
@@ -802,7 +800,7 @@ a new object."
          (post-init-func (intern (format "%S/post-init-%S"
                                          layer-name pkg-name)))
          (copyp (not (null obj)))
-         (obj (if obj obj (cfgl-package pkg-name-str :name pkg-name)))
+         (obj (if obj obj (cfgl-package :name pkg-name)))
          (ownerp (or (and (eq 'dotfile layer-name)
                           (null (oref obj owners)))
                      (fboundp init-func))))
@@ -827,7 +825,7 @@ a new object."
                                (format "%s%s"
                                        (configuration-layer/get-layer-local-dir
                                         layer-name)
-                                       pkg-name-str))))
+                                       pkg-name))))
                     (oset
                      obj location `(recipe :fetcher file :path ,path))))
            ((eq 'dotfile layer-name) nil))
