@@ -2097,13 +2097,16 @@ to update."
                            (format " (skipped %s):\n" skipped-count)
                          ":\n"))
                upgrade-count) t)
+      (sort update-packages #'string<)
       (mapc (lambda (x)
               (spacemacs-buffer/append
-               (format (if (memq (intern x) dotspacemacs-frozen-packages)
+               (format (if (memq x dotspacemacs-frozen-packages)
                            "%s (won't be updated because package is frozen)\n"
                          "%s\n") x) t))
-            (sort (mapcar 'symbol-name update-packages) 'string<))
-      (setq configuration-layer--packages-to-update update-packages)
+            update-packages)
+      (setq update-packages (cl-set-difference update-packages
+                                               dotspacemacs-frozen-packages)
+            configuration-layer--packages-to-update update-packages)
       (if no-confirmation
           (configuration-layer//update-packages update-packages)
         (let ((answer (let ((read-answer-short t))
